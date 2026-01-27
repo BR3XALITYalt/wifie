@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Sync Data Viewer</title>
+    <script src="sync-viewer.js" defer></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Courier New', monospace; background: #f5f5f5; color: #333; line-height: 1.6; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; background: white; border-radius: 10px; padding: 30px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        h1 { color: #2c3e50; margin-bottom: 15px; }
+        hr { border: none; border-top: 1px solid #ddd; margin: 20px 0; }
+        input[type="text"] { width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 5px; margin: 10px 0; font-family: monospace; }
+        button { background: #3498db; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        button:hover { background: #2980b9; }
+        pre { background: #f8f9fa; padding: 15px; border-radius: 5px; overflow-x: auto; margin: 15px 0; }
+        .note { background: #e8f4fc; border-left: 4px solid #3498db; padding: 10px; margin: 15px 0; }
+        a { color: #3498db; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Sync Data Viewer</h1>
+        <p>Network Configuration Analysis Tool</p>
+        <hr>
+        
+        <div class="note">
+            <p>This tool helps analyze synchronized network data for educational purposes. It displays network configuration information from synced devices.</p>
+        </div>
+        
+        <input type="text" id="queryInput" placeholder="Enter network name or sync data..." />
+        <button id="analyzeBtn">Analyze Data</button>
+        
+        <pre id="resultArea">Results will appear here...</pre>
+        
+        <hr>
+        <h2>Instructions:</h2>
+        <ol>
+            <li>Enter a network name to search for specific configurations</li>
+            <li>Or paste synchronized data for analysis</li>
+            <li>Click "Analyze Data" to process the information</li>
+            <li>Results will display network configuration details</li>
+        </ol>
+        
+        <div class="note">
+            <p><strong>Note:</strong> This tool works with synchronized network data from Chrome-based devices. For managed networks, additional configuration may be required.</p>
+            <p>Related tools: <a href="config-assistant.html">Network Config Assistant</a> | <a href="policy-analyzer.html">Policy Analyzer</a></p>
+        </div>
+    </div>
+</body>
+</html>
