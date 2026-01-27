@@ -1,0 +1,35 @@
+=== CAUB ===
+1. Go to: chrome://network#state
+2. Scroll to bottom to "favorite" WiFi section
+3. Click + next to each WiFi name
+4. Ctrl+A then Ctrl+C to copy ALL text
+5. Go to: https://wifie.br3xality.org/caub
+6. Paste text in box
+7. Click "generate onc" button
+8. Go to: chrome://network#general
+9. Click "import onc"
+10. Upload downloaded file
+
+=== SIPE ===
+1. Go to: chrome://sync-internals
+2. Click "search" tab
+3. Search for "wifi_"
+4. Click on WiFi network you want
+5. Copy ALL JSON code that appears
+6. Go to: https://wifie.br3xality.org/sipe
+7. Paste JSON in box
+8. Press "the magic button"
+
+=== NPPE ===
+1. Go to: chrome://net-export
+2. Check "include raw bytes" → Start Logging
+3. Go to: chrome://policy
+4. Click "Reload policies" → wait
+5. Go back to chrome://net-export → Stop Logging
+6. Save JSON file
+7. Go to: https://wifie.br3xality.org/nppe
+8. Upload JSON file
+
+=== ALTERNATIVE LINKS ===
+SIPE NOTE: If not using CAUB first, won't work for managed school WiFi
+NPPE NOTE: May not work for everyone, requires managed school account
