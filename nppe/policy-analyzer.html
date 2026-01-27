@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Policy Analyzer</title>
+    <script src="policy-analyzer.js" defer></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Courier New', monospace; background: #f5f5f5; color: #333; line-height: 1.6; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; background: white; border-radius: 10px; padding: 30px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        h1 { color: #2c3e50; margin-bottom: 15px; }
+        hr { border: none; border-top: 1px solid #ddd; margin: 20px 0; }
+        input[type="file"] { width: 100%; padding: 10px; margin: 10px 0; }
+        button { background: #3498db; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; margin: 5px; }
+        button:hover { background: #2980b9; }
+        button:disabled { background: #95a5a6; cursor: not-allowed; }
+        pre { background: #f8f9fa; padding: 15px; border-radius: 5px; overflow-x: auto; margin: 15px 0; min-height: 100px; }
+        .note { background: #e8f4fc; border-left: 4px solid #3498db; padding: 10px; margin: 15px 0; }
+        .warning { background: #fff3cd; border-left: 4px solid #ffc107; padding: 10px; margin: 15px 0; }
+        a { color: #3498db; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Policy Analyzer</h1>
+        <p>Network Policy Analysis Tool</p>
+        <hr>
+        
+        <div class="warning">
+            <p><strong>Note:</strong> For comprehensive policy analysis, consider using specialized network analysis tools available online.</p>
+        </div>
+        
+        <button id="viewRawBtn" disabled>View Raw Policy Data</button>
+        <input type="file" id="policyFile" accept="application/json" />
+        
+        <pre id="outputArea">To begin: (This requires managed device access)
+1. Navigate to network export settings
+2. Enable logging and capture data
+3. Access policy settings and refresh
+4. Stop logging and export data
+5. Upload the JSON file here for analysis</pre>
+        
+        <div class="note">
+            <p><strong>Analysis Process:</strong> This tool examines network policy configurations to identify settings and parameters. It's designed for educational analysis of network policies on managed devices.</p>
+            <p><strong>Compatibility:</strong> Works with Chrome-based managed devices. Results may vary based on device policies and configurations.</p>
+        </div>
+    </div>
+</body>
+</html>
