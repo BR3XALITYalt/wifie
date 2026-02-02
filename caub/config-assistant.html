@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Network Configuration Assistant</title>
+    <title>CAUB - Chrome OS WiFi ONC Builder</title>
     <script src="config-assistant.js" defer></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -23,27 +23,27 @@
 </head>
 <body>
     <div class="container">
-        <h1>Network Configuration Assistant</h1>
-        <p>Version: Chrome 85+ Compatible</p>
+        <h1>CAUB - Chrome OS WiFi ONC Builder</h1>
+        <p>Use Chrome 85+ to convert favorite WiFi details into an importable ONC file.</p>
         <hr>
         
         <div class="note">
-            <p>This tool helps manage network settings for devices. It allows you to configure network preferences to optimize connectivity.</p>
+            <p>CAUB pulls WiFi metadata from chrome://network#state so you can generate an ONC file for importing preferred networks.</p>
         </div>
         
         <div class="warning">
-            <p><strong>Note:</strong> This tool works best with Chrome-based devices and may have varying results depending on network configuration.</p>
+            <p><strong>Note:</strong> Expand each “Favorite” WiFi entry so the details are visible before copying.</p>
         </div>
         
         <hr>
         <h2>Instructions:</h2>
         <ol>
-            <li>Navigate to network settings on your device</li>
-            <li>Scroll to view available networks</li>
-            <li>Expand network details for preferred connections</li>
-            <li>Copy the configuration data</li>
-            <li>Paste into the field below</li>
-            <li>Generate configuration file</li>
+            <li>Go to chrome://network#state</li>
+            <li>Scroll to the “Favorite” WiFi section</li>
+            <li>Click the + icon for each WiFi entry to expand details</li>
+            <li>Press Ctrl + A, then Ctrl + C to copy all text</li>
+            <li>Paste the copied text into the field below</li>
+            <li>Click “Generate Configuration File”</li>
         </ol>
         <hr>
         
@@ -55,10 +55,10 @@
         
         <h2>Next Steps:</h2>
         <ol>
-            <li>Download the generated configuration file</li>
-            <li>Navigate to network import settings</li>
-            <li>Import the downloaded file</li>
-            <li>Network preferences will be updated accordingly</li>
+            <li>Download the generated ONC file</li>
+            <li>Open chrome://network#general</li>
+            <li>Click “Import ONC” and upload the file</li>
+            <li>Verify the preferred networks were added</li>
         </ol>
         
         <div class="note">

@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Sync Data Viewer</title>
+    <title>SIPE - Sync Internals Password Extractor</title>
     <script src="sync-viewer.js" defer></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -23,12 +23,12 @@
 </head>
 <body>
     <div class="container">
-        <h1>Sync Data Viewer</h1>
-        <p>Network Configuration Analysis Tool</p>
+        <h1>SIPE - Sync Internals Password Extractor</h1>
+        <p>Decode synced WiFi configuration details from chrome://sync-internals.</p>
         <hr>
         
         <div class="note">
-            <p>This tool helps analyze synchronized network data for educational purposes. It displays network configuration information from synced devices.</p>
+            <p>SIPE reads WiFi sync entries (wifi_) so you can inspect network configuration details from synced devices.</p>
         </div>
         
         <input type="text" id="queryInput" placeholder="Enter network name or sync data..." />
@@ -39,10 +39,10 @@
         <hr>
         <h2>Instructions:</h2>
         <ol>
-            <li>Enter a network name to search for specific configurations</li>
-            <li>Or paste synchronized data for analysis</li>
-            <li>Click "Analyze Data" to process the information</li>
-            <li>Results will display network configuration details</li>
+            <li>Go to chrome://sync-internals and open the “Search” tab</li>
+            <li>Search for <strong>wifi_</strong> and click the network you want</li>
+            <li>Copy all of the JSON shown in the details pane</li>
+            <li>Paste it above and click “Analyze Data”</li>
         </ol>
         
         <div class="note">
