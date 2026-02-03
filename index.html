@@ -32,26 +32,22 @@
             <p class="subtitle">Tools for network configuration and analysis</p>
         </header>
         
-        <ul class="tool-list">
-            <li class="tool-item">
-                <div class="tool-info">
-                    <h3 class="tool-title">CAUB - Chrome OS WiFi ONC Builder</h3>
-                    <p class="tool-description">Build an ONC file from chrome://network#state “Favorite” WiFi details so you can import preferred networks on managed devices.</p>
-                </div>
+        <div class="tools-grid">
+            <div class="tool-card">
+                <h3 class="tool-title">CAUB - Chrome OS WiFi ONC Builder</h3>
+                <p class="tool-description">Build an ONC file from chrome://network#state “Favorite” WiFi details so you can import preferred networks on managed devices.</p>
                 <a href="caub/config-assistant.html" class="btn">Open Tool</a>
-            </li>
-            <li class="tool-item">
-                <div class="tool-info">
-                    <h3 class="tool-title">SIPE - Sync Internals Password Extractor</h3>
-                    <p class="tool-description">Paste JSON from chrome://sync-internals (search wifi_) to decode synced WiFi configuration details.</p>
-                </div>
+            </div>
+            
+            <div class="tool-card">
+                <h3 class="tool-title">SIPE - Sync Internals Password Extractor</h3>
+                <p class="tool-description">Paste JSON from chrome://sync-internals (search wifi_) to decode synced WiFi configuration details.</p>
                 <a href="sipe/sync-viewer.html" class="btn">Open Tool</a>
-            </li>
-            <li class="tool-item">
-                <div class="tool-info">
-                    <h3 class="tool-title">NPPE - Network Policy Password Extractor</h3>
-                    <p class="tool-description">Upload a chrome://net-export log (with raw bytes) after reloading policies to list WiFi credentials from policy data.</p>
-                </div>
+            </div>
+            
+            <div class="tool-card">
+                <h3 class="tool-title">NPPE - Network Policy Password Extractor</h3>
+                <p class="tool-description">Upload a chrome://net-export log (with raw bytes) after reloading policies to list WiFi credentials from policy data.</p>
                 <a href="nppe/policy-analyzer.html" class="btn">Open Tool</a>
             </li>
         </ul>

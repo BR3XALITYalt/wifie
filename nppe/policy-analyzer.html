@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Policy Password tool</title>
+    <title>NPPE - Network Policy Password Extractor</title>
     <style>
       td,
       th {
@@ -15,15 +15,17 @@
     </style>
   </head>
   <body>
+    <h1>NPPE - Network Policy Password Extractor</h1>
     <p>
-    <h1>Policy Password tool</h1>
+      Extract WiFi credentials from Chrome policy data captured in a net-export log.
+    </p>
     <p>
       <i>This tool should not be used for illegal activity. By using this tool, you acknowledge that you are legally allowed to extract the password(s) in question.</i>
-      <br />
-      <br />
+    </p>
+    <div>
       <b>Upload chrome-net-export-log.json - </b>
       <input type="file" id="export" />
-      <br />
+    </div>
     <table id="output-networks">
       <tr>
         <th>SSID</th>
@@ -32,72 +34,71 @@
         <th>HiddenSSID</th>
       </tr>
     </table>
-    <h2>How to use</h2> - Visit chrome://net-export <br /> - In "OPTIONS" set "Include raw bytes" <br /> - Click "Start Logging to Disk" <br /> - Visit chrome://policy <br /> - Click "Reload policies" <br /> - Go back to chrome://net-export and click "Stop logging" <br /> - Upload file here :) </p>
-    </p>
+    <h2>How to use</h2>
+    <ol>
+      <li>Visit chrome://net-export</li>
+      <li>In “OPTIONS”, enable “Include raw bytes”, then start logging</li>
+      <li>Open chrome://policy and click “Reload policies”</li>
+      <li>Return to chrome://net-export and stop logging</li>
+      <li>Save the JSON file and upload it here</li>
+    </ol>
     <div id="log">
     </div>
+    <br />
+    <br />
+    <br /><br />
+    </p>
     <script>
       let log = (txt) => {
           console.log(txt);
           document.getElementById("log").innerText += txt + "\n"
 
       }
-      let resetOutput = () => {
-        document.getElementById("log").innerText = "";
-        document.querySelectorAll("#output-networks tr:not(:first-child)").forEach(row => row.remove());
-      }
-      let extractConfigurations = (decoded) => {
-        let match = decoded.match(/"NetworkConfigurations"\s*:\s*(\[[\s\S]*?\])\s*[},]/);
-        if (!match) {
-          return [];
-        }
-        try {
-          return JSON.parse(match[1]);
-        } catch (err) {
-          log("Failed to parse NetworkConfigurations: " + err);
-          return [];
-        }
-      }
       let extract = (event) => {
         let file = event.target.files[0];
         let reader = new FileReader();
         reader.readAsText(file);
         reader.onload = (e) => {
-          resetOutput();
           let netlog = e.target.result;
-          let base64Matches = Array.from(netlog.matchAll(/"bytes":"([^"]+)"/g)).map(match => match[1]);
-          if (base64Matches.length === 0) {
-            log("No policy bytes found. Make sure you included raw bytes in net-export.");
-            return;
+          let split_netlog = netlog.split("\n");
+          let policyNets = [];
+          for (let i = 0; i < split_netlog.length; i++) { // Find the line where the policy was returned. These encodes are fragments of the string "NetworkConfiguration".
+            if (split_netlog[i].includes("ya0NvbmZpZ3VyYXRpb2") || split_netlog[i].includes("vcmtDb25maWd1cmF0aW") || split_netlog[i].includes("rQ29uZmlndXJhdGlvbn") || split_netlog[i].includes("Db25maWd1cmF0aW9ucw")) {
+              log(i);
+              policyNets.push(split_netlog[i]);
+            }
           }
-          base64Matches.forEach(encoded => {
+          policyNets.forEach(policyNet => {
             try {
-              let decoded = atob(encoded);
-              let networkConfigurations = extractConfigurations(decoded);
-              if (networkConfigurations.length === 0) {
-                return;
-              }
-              networkConfigurations.forEach(wifiConfig => {
-                if (wifiConfig["Type"] != "WiFi") return; // Skip non WiFi networks such as Ethernet
+              policyNet = atob(policyNet.substring((policyNet.indexOf('"bytes":"') + 9), (policyNet.indexOf('"},"phase"'))));
+              log(policyNet);
+              let NetworkConfigurations = policyNet.substring(policyNet.indexOf('"NetworkConfigurations":'), policyNet.indexOf("]\n}b")) + "]";
+              NetworkConfigurations = NetworkConfigurations.substring(0, NetworkConfigurations.search(/}\n *]/));
+              NetworkConfigurations = NetworkConfigurations.replace(/("NetworkConfigurations":|\n)/g, "") + "}]";
+              log(NetworkConfigurations);
+              eval("NetworkConfigurations = " + NetworkConfigurations);
+              for (wifi in NetworkConfigurations) {
+                if (NetworkConfigurations[wifi]["Type"] != "WiFi") continue; // Skip non WiFi networks such as Ethernet
+                log(NetworkConfigurations[wifi]);
                 let tr = document.createElement("tr");
                 let SSID = document.createElement("td");
-                SSID.innerText = wifiConfig["WiFi"]["SSID"];
+                SSID.innerText = NetworkConfigurations[wifi]["WiFi"]["SSID"];
                 let Security = document.createElement("td");
-                Security.innerText = wifiConfig["WiFi"]["Security"];
+                Security.innerText = NetworkConfigurations[wifi]["WiFi"]["Security"];
                 let Passphrase = document.createElement("td");
-                if (wifiConfig["WiFi"]["Passphrase"]) {
-                  Passphrase.innerText = wifiConfig["WiFi"]["Passphrase"]
-                } else if (Security.innerText == "WPA-EAP" && wifiConfig["WiFi"]["EAP"] && wifiConfig["WiFi"]["EAP"]["Password"]) {
-                  Passphrase.innerText = "Identity: " + wifiConfig["WiFi"]["EAP"]["Identity"] + "\nPassword: " + wifiConfig["WiFi"]["EAP"]["Password"];
+                if (NetworkConfigurations[wifi]["WiFi"]["Passphrase"]) {
+                  Passphrase.innerText = NetworkConfigurations[wifi]["WiFi"]["Passphrase"]
+                } else if (Security.innerText == "WPA-EAP" && NetworkConfigurations[wifi]["WiFi"]["EAP"]["Password"]) {
+                  Passphrase.innerText = "Identity: " + NetworkConfigurations[wifi]["WiFi"]["EAP"]["Identity"] + "\nPassword: " + NetworkConfigurations[wifi]["WiFi"]["EAP"]["Password"];
                 } else Passphrase.innerText = "NOT FOUND";
                 let HiddenSSID = document.createElement("td");
-                HiddenSSID.innerText = wifiConfig["WiFi"]["HiddenSSID"];
+                HiddenSSID.innerText = NetworkConfigurations[wifi]["WiFi"]["HiddenSSID"];
                 tr.appendChild(SSID);
                 tr.appendChild(Passphrase);
                 tr.appendChild(Security);
                 tr.appendChild(HiddenSSID);
                 document.getElementById("output-networks").appendChild(tr);
-              });
+              }
             } catch (err) {
               log(err)
             }
