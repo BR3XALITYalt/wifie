@@ -1,52 +1,111 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Policy Analyzer</title>
-    <script src="policy-analyzer.js" defer></script>
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Policy Password tool</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Courier New', monospace; background: #f5f5f5; color: #333; line-height: 1.6; padding: 20px; }
-        .container { max-width: 800px; margin: 0 auto; background: white; border-radius: 10px; padding: 30px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        h1 { color: #2c3e50; margin-bottom: 15px; }
-        hr { border: none; border-top: 1px solid #ddd; margin: 20px 0; }
-        input[type="file"] { width: 100%; padding: 10px; margin: 10px 0; }
-        button { background: #3498db; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; margin: 5px; }
-        button:hover { background: #2980b9; }
-        button:disabled { background: #95a5a6; cursor: not-allowed; }
-        pre { background: #f8f9fa; padding: 15px; border-radius: 5px; overflow-x: auto; margin: 15px 0; min-height: 100px; }
-        .note { background: #e8f4fc; border-left: 4px solid #3498db; padding: 10px; margin: 15px 0; }
-        .warning { background: #fff3cd; border-left: 4px solid #ffc107; padding: 10px; margin: 15px 0; }
-        a { color: #3498db; text-decoration: none; }
-        a:hover { text-decoration: underline; }
+      td,
+      th {
+        border: 1px solid #000;
+      }
+      #log {
+         font-family: "Courier"   
+       }
     </style>
-</head>
-<body>
-    <div class="container">
-        <h1>Policy Analyzer</h1>
-        <p>Network Policy Analysis Tool</p>
-        <hr>
-        
-        <div class="warning">
-            <p><strong>Note:</strong> For comprehensive policy analysis, consider using specialized network analysis tools available online.</p>
-        </div>
-        
-        <button id="viewRawBtn" disabled>View Raw Policy Data</button>
-        <input type="file" id="policyFile" accept="application/json" />
-        
-        <pre id="outputArea">To begin: (This requires managed device access)
-1. Navigate to network export settings
-2. Enable logging and capture data
-3. Access policy settings and refresh
-4. Stop logging and export data
-5. Upload the JSON file here for analysis</pre>
-        
-        <div class="note">
-            <p><strong>Analysis Process:</strong> This tool examines network policy configurations to identify settings and parameters. It's designed for educational analysis of network policies on managed devices.</p>
-            <p><strong>Compatibility:</strong> Works with Chrome-based managed devices. Results may vary based on device policies and configurations.</p>
-        </div>
+  </head>
+  <body>
+    <p>
+    <h1>Policy Password tool</h1>
+    <p>
+      <i>This tool should not be used for illegal activity. By using this tool, you acknowledge that you are legally allowed to extract the password(s) in question.</i>
+      <br />
+      <br />
+      <b>Upload chrome-net-export-log.json - </b>
+      <input type="file" id="export" />
+      <br />
+    <table id="output-networks">
+      <tr>
+        <th>SSID</th>
+        <th>Credentials</th>
+        <th>Security</th>
+        <th>HiddenSSID</th>
+      </tr>
+    </table>
+    <h2>How to use</h2> - Visit chrome://net-export <br /> - In "OPTIONS" set "Include raw bytes" <br /> - Click "Start Logging to Disk" <br /> - Visit chrome://policy <br /> - Click "Reload policies" <br /> - Go back to chrome://net-export and click "Stop logging" <br /> - Upload file here :) </p>
+    </p>
+    <div id="log">
     </div>
+    <script>
+      let log = (txt) => {
+          console.log(txt);
+          document.getElementById("log").innerText += txt + "\n"
+
+      }
+      let resetOutput = () => {
+        document.getElementById("log").innerText = "";
+        document.querySelectorAll("#output-networks tr:not(:first-child)").forEach(row => row.remove());
+      }
+      let extractConfigurations = (decoded) => {
+        let match = decoded.match(/"NetworkConfigurations"\s*:\s*(\[[\s\S]*?\])\s*[},]/);
+        if (!match) {
+          return [];
+        }
+        try {
+          return JSON.parse(match[1]);
+        } catch (err) {
+          log("Failed to parse NetworkConfigurations: " + err);
+          return [];
+        }
+      }
+      let extract = (event) => {
+        let file = event.target.files[0];
+        let reader = new FileReader();
+        reader.readAsText(file);
+        reader.onload = (e) => {
+          resetOutput();
+          let netlog = e.target.result;
+          let base64Matches = Array.from(netlog.matchAll(/"bytes":"([^"]+)"/g)).map(match => match[1]);
+          if (base64Matches.length === 0) {
+            log("No policy bytes found. Make sure you included raw bytes in net-export.");
+            return;
+          }
+          base64Matches.forEach(encoded => {
+            try {
+              let decoded = atob(encoded);
+              let networkConfigurations = extractConfigurations(decoded);
+              if (networkConfigurations.length === 0) {
+                return;
+              }
+              networkConfigurations.forEach(wifiConfig => {
+                if (wifiConfig["Type"] != "WiFi") return; // Skip non WiFi networks such as Ethernet
+                let tr = document.createElement("tr");
+                let SSID = document.createElement("td");
+                SSID.innerText = wifiConfig["WiFi"]["SSID"];
+                let Security = document.createElement("td");
+                Security.innerText = wifiConfig["WiFi"]["Security"];
+                let Passphrase = document.createElement("td");
+                if (wifiConfig["WiFi"]["Passphrase"]) {
+                  Passphrase.innerText = wifiConfig["WiFi"]["Passphrase"]
+                } else if (Security.innerText == "WPA-EAP" && wifiConfig["WiFi"]["EAP"] && wifiConfig["WiFi"]["EAP"]["Password"]) {
+                  Passphrase.innerText = "Identity: " + wifiConfig["WiFi"]["EAP"]["Identity"] + "\nPassword: " + wifiConfig["WiFi"]["EAP"]["Password"];
+                } else Passphrase.innerText = "NOT FOUND";
+                let HiddenSSID = document.createElement("td");
+                HiddenSSID.innerText = wifiConfig["WiFi"]["HiddenSSID"];
+                tr.appendChild(SSID);
+                tr.appendChild(Passphrase);
+                tr.appendChild(Security);
+                tr.appendChild(HiddenSSID);
+                document.getElementById("output-networks").appendChild(tr);
+              });
+            } catch (err) {
+              log(err)
+            }
+          })
+        }
+      }
+      document.getElementById("export").addEventListener("change", extract)
+    </script>
+  <script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"version":"2024.11.0","token":"d52dd2e9679d441b81f16ad940129f88","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
 </body>
 </html>
